@@ -5,6 +5,8 @@ package com.zz.wiki.resp;
  */
 public class CommonResp<T> {
 
+
+
     /**
      * 业务上的成功或失败
      */
@@ -52,5 +54,12 @@ public class CommonResp<T> {
         sb.append(", content=").append(content);
         sb.append('}');
         return sb.toString();
+    }
+
+    public static <T> CommonResp<T> ok(T content){
+        CommonResp<T> resp = new CommonResp<>();
+        resp.setSuccess(true);
+        resp.setContent(content);
+        return resp;
     }
 }
