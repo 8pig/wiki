@@ -1,10 +1,17 @@
-import React, { useState } from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 // 编程式导航，需要用到hook函数来得到导航对象，完成编程导航
 import { NavLink, useNavigate } from 'react-router-dom'
 
 const Home = () => {
   const navigate = useNavigate()
   const [first, setFirst] = useState({a: 1})
+
+  useEffect(() => {
+    axios.get('/ebook/list').then(res => {
+      console.log(res);
+    })
+  }, [])
 
   const jumpUrl = () => {
     // 写法1
