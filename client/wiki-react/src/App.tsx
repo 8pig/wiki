@@ -12,7 +12,6 @@ const headerStyle: React.CSSProperties = {
 
 const contentStyle: React.CSSProperties = {
     color: '#fff',
-    backgroundColor: '#108ee9',
 };
 
 const siderStyle: React.CSSProperties = {
