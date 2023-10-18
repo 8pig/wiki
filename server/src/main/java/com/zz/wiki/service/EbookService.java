@@ -1,11 +1,14 @@
 package com.zz.wiki.service;
 
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zz.wiki.domain.Ebook;
 import com.zz.wiki.domain.EbookExample;
 import com.zz.wiki.mapper.EbookMapper;
 import com.zz.wiki.req.EbookReq;
 import com.zz.wiki.resp.EbookResp;
+import com.zz.wiki.resp.PageResp;
 import com.zz.wiki.util.CopyUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -20,18 +23,30 @@ import java.util.List;
 @Service
 public class EbookService {
 
+
     @Resource
     private EbookMapper ebookMapper;
 
-    public List<EbookResp> list (EbookReq req) {
+    public PageResp<EbookResp> list (EbookReq req) {
+
         EbookExample ebookExample = new EbookExample();
         // @ 相当于where 条件
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         if(!ObjectUtils.isEmpty(req.getName())){
             criteria.andNameLike("%"+ req.getName() + "%");
         }
+        PageHelper.startPage(req.getPage(), req.getSize());
         List<Ebook> ebooks = ebookMapper.selectByExample(ebookExample);
-        List<EbookResp> respList = new ArrayList<>();
+
+        PageInfo<Ebook> pageInfo = new PageInfo<>(ebooks);
+        long total = pageInfo.getTotal();
+        int pages = pageInfo.getPages();
+        System.out.println(total);
+        System.out.println(pages);
+        PageResp<EbookResp> pageResp = new PageResp<>();
+        pageResp.setList(CopyUtil.copyList(ebooks, EbookResp.class));
+        pageResp.setTotal(pageInfo.getTotal());
+
 
 //        for (Ebook ebook : ebooks) {
 //            EbookResp ebookResp = new EbookResp();
@@ -40,6 +55,6 @@ public class EbookService {
 //            respList.add(copy);
 //        }
 
-        return CopyUtil.copyList(ebooks, EbookResp.class);
+        return pageResp;
     }
 }

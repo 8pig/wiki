@@ -18,7 +18,7 @@ const Home = () => {
   const [list, setList] = useState<any>([]);
 
   useEffect(() => {
-    axios.get('/ebook/list').then(res => {
+    axios.get('/ebook/list?page=1&size=2').then(res => {
       console.log(res);
       setList(res.data.content)
     })
