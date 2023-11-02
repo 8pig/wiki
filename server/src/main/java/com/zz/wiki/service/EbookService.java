@@ -11,6 +11,7 @@ import com.zz.wiki.req.EbookSaveReq;
 import com.zz.wiki.resp.EbookQueryResp;
 import com.zz.wiki.resp.PageResp;
 import com.zz.wiki.util.CopyUtil;
+import com.zz.wiki.util.SnowFlake;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -26,6 +27,9 @@ public class EbookService {
 
     @Resource
     private EbookMapper ebookMapper;
+
+    @Resource
+    private SnowFlake snowFlake;
 
     public PageResp<EbookQueryResp> list (EbookQueryReq req) {
 
@@ -65,6 +69,8 @@ public class EbookService {
         * */
         Ebook ebook = CopyUtil.copy(req, Ebook.class);
         if(ObjectUtils.isEmpty(ebook.getId())){
+            long l = snowFlake.nextId();
+            ebook.setId(l);
             return ebookMapper.insert(ebook);
         }else{
             return ebookMapper.updateByPrimaryKey(ebook);
