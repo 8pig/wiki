@@ -6,15 +6,15 @@ import com.github.pagehelper.PageInfo;
 import com.zz.wiki.domain.Ebook;
 import com.zz.wiki.domain.EbookExample;
 import com.zz.wiki.mapper.EbookMapper;
-import com.zz.wiki.req.EbookReq;
-import com.zz.wiki.resp.EbookResp;
+import com.zz.wiki.req.EbookQueryReq;
+import com.zz.wiki.req.EbookSaveReq;
+import com.zz.wiki.resp.EbookQueryResp;
 import com.zz.wiki.resp.PageResp;
 import com.zz.wiki.util.CopyUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +27,7 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public PageResp<EbookResp> list (EbookReq req) {
+    public PageResp<EbookQueryResp> list (EbookQueryReq req) {
 
         EbookExample ebookExample = new EbookExample();
         // @ 相当于where 条件
@@ -43,8 +43,8 @@ public class EbookService {
         int pages = pageInfo.getPages();
         System.out.println(total);
         System.out.println(pages);
-        PageResp<EbookResp> pageResp = new PageResp<>();
-        pageResp.setList(CopyUtil.copyList(ebooks, EbookResp.class));
+        PageResp<EbookQueryResp> pageResp = new PageResp<>();
+        pageResp.setList(CopyUtil.copyList(ebooks, EbookQueryResp.class));
         pageResp.setTotal(pageInfo.getTotal());
 
 
@@ -56,5 +56,21 @@ public class EbookService {
 //        }
 
         return pageResp;
+    }
+
+
+    public int save(EbookSaveReq req) {
+        /*
+        * 保存
+        * */
+        Ebook ebook = CopyUtil.copy(req, Ebook.class);
+        if(ObjectUtils.isEmpty(ebook.getId())){
+            return ebookMapper.insert(ebook);
+        }else{
+            return ebookMapper.updateByPrimaryKey(ebook);
+        }
+
+
+
     }
 }

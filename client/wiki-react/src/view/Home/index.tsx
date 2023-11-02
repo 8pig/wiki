@@ -1,9 +1,10 @@
 import { Avatar, Col, List, Row, Space } from 'antd'
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 // 编程式导航，需要用到hook函数来得到导航对象，完成编程导航
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
+import { get } from 'http';
 
 const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
   <Space>
@@ -16,13 +17,20 @@ const Home = () => {
   const navigate = useNavigate()
   const [first, setFirst] = useState({a: 1})
   const [list, setList] = useState<any>([]);
+  const [pageInfo, setPageInfo] = useState(() => ({total: 0, current: 1}));
+  const [page, setPage] = useState(1)
+
 
   useEffect(() => {
-    axios.get('/ebook/list?page=1&size=2').then(res => {
-      console.log(res);
-      setList(res.data.content)
-    })
+    getList(pageInfo)
   }, [])
+  const getList = (data:any) => {
+    axios.get(`/ebook/list?page=${data.current}&size=3`).then(res => {
+      setPageInfo({...pageInfo, total: res.data.content.total});
+      setList(res.data.content.list)
+
+  })
+}
 
   const jumpUrl = () => {
     // 写法1
@@ -40,6 +48,7 @@ const Home = () => {
 
   return (
     <div>
+      <button>1</button>
 
 
 
@@ -49,9 +58,15 @@ const Home = () => {
         size="large"
         pagination={{
           onChange: (page) => {
-            console.log(page);
+            console.error(page, pageInfo.total);
+            const data = {total: pageInfo.total, current: page}
+            // Object.assign(pageInfo, {current: page})
+            setPageInfo(data)
+            getList({current: page})
+
           },
           pageSize: 3,
+          total: pageInfo.total,
         }}
         dataSource={list}
         footer={
@@ -89,7 +104,7 @@ const Home = () => {
           return <li
             onClick={() => {
               navigate(`/detail/${item.age}?age=${item.age}`, {
-                state:  { name: item.title }, // 隐式传递数据
+                state:  { name: item.title }, // 隐式传递数据  
                 replace: true // 不可回退
               })
 

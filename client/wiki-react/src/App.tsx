@@ -34,6 +34,8 @@ const footerStyle: React.CSSProperties = {
 // 路由匹配成功后要渲染的组件
 import Home from './view/Home'
 import {Layout, Menu} from "antd";
+import {Test} from "./components/test";
+import Ebook from "./view/admin/Ebook";
 const About = React.lazy(() => import('./view/About'))
 
 const Detail = React.lazy(() => import('./view/Detail'))
@@ -58,6 +60,11 @@ const App = () => {
                             label: 'About',
                             key: '/about',
                             icon: <MailOutlined />,
+                        },
+                        {
+                            label: 'Admin',
+                            key: '/admin',
+                            icon: <MailOutlined />,
                         }
                     ]}
                     onClick={(e) =>{
@@ -71,6 +78,7 @@ const App = () => {
                     <Routes>
                         <Route path='/home' element={<Home />} />
                         <Route path='/about' element={<Suspense fallback={<p>loading</p>}><About /></Suspense>} />
+                        <Route path='/admin' element={<Suspense fallback={<p>loading</p>}><Ebook /></Suspense>} />
                         <Route path='/detail/:id' element={<Suspense fallback={<p>loading</p>}><Detail /></Suspense>} />
 
                         {/* 重定向 */}
@@ -82,7 +90,9 @@ const App = () => {
 
                 </Content>
             </Layout>
-            <Footer style={footerStyle}>Footer</Footer>
+            <Footer style={footerStyle}>
+                <Test a={1} b={2} />
+                Footer</Footer>
         </Layout>
 
 
