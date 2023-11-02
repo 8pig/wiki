@@ -69,8 +69,7 @@ public class EbookService {
         * */
         Ebook ebook = CopyUtil.copy(req, Ebook.class);
         if(ObjectUtils.isEmpty(ebook.getId())){
-            long l = snowFlake.nextId();
-            ebook.setId(l);
+            ebook.setId(snowFlake.nextId());
             return ebookMapper.insert(ebook);
         }else{
             return ebookMapper.updateByPrimaryKey(ebook);
