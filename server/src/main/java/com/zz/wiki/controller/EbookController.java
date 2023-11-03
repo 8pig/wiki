@@ -7,10 +7,11 @@ import com.zz.wiki.resp.CommonResp;
 import com.zz.wiki.resp.EbookQueryResp;
 import com.zz.wiki.resp.PageResp;
 import com.zz.wiki.service.EbookService;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/ebook")
@@ -22,7 +23,8 @@ public class EbookController {
     private EbookService ebookService;
 
     @GetMapping("/list")
-    public CommonResp<PageResp<EbookQueryResp>> list (EbookQueryReq req){
+    public CommonResp<PageResp<EbookQueryResp>> list (@Valid EbookQueryReq req){
+        System.out.println(req.toString());
         PageResp<EbookQueryResp> list = ebookService.list(req);
 
         return  CommonResp.ok(list);

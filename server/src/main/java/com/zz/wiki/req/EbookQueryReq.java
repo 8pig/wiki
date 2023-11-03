@@ -1,9 +1,12 @@
 package com.zz.wiki.req;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author zhou
  */
 public class EbookQueryReq extends PageReq {
+
     private Long id;
 
     private String name;
