@@ -35,7 +35,7 @@ public class EbookController {
         return  CommonResp.ok(ebookService.save(req));
     }
 
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public CommonResp delete (@PathVariable Long id){
         return  CommonResp.ok(ebookService.delete(id));
     }
