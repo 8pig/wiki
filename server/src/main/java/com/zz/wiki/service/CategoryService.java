@@ -40,8 +40,7 @@ public class CategoryService {
         PageInfo<Category> pageInfo = new PageInfo<>(categorys);
         long total = pageInfo.getTotal();
         int pages = pageInfo.getPages();
-        System.out.println(total);
-        System.out.println(pages);
+
         PageResp<CategoryQueryResp> pageResp = new PageResp<>();
         pageResp.setList(CopyUtil.copyList(categorys, CategoryQueryResp.class));
         pageResp.setTotal(pageInfo.getTotal());
