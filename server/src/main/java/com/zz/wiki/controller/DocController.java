@@ -1,6 +1,7 @@
 package com.zz.wiki.controller;
 
 
+import com.zz.wiki.domain.Content;
 import com.zz.wiki.req.DocQueryReq;
 import com.zz.wiki.req.DocSaveReq;
 import com.zz.wiki.resp.DocQueryResp;
@@ -39,12 +40,22 @@ public class DocController {
     }
 
     @PostMapping("/save")
-    public CommonResp save (@RequestBody DocSaveReq req){
+    public CommonResp save (@Valid @RequestBody DocSaveReq req){
         return  CommonResp.ok(docService.save(req));
     }
 
     @DeleteMapping("/delete/{id}")
     public CommonResp delete (@PathVariable Long id){
         return  CommonResp.ok(docService.delete(id));
+    }
+
+
+    @GetMapping("/find-content/{id}")
+    public CommonResp<String>
+    findContent (@PathVariable Long id){
+        System.out.println(id);
+        String content = docService.findContent(id);
+
+        return  CommonResp.ok(content);
     }
 }

@@ -3,8 +3,10 @@ package com.zz.wiki.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zz.wiki.domain.Content;
 import com.zz.wiki.domain.Doc;
 import com.zz.wiki.domain.DocExample;
+import com.zz.wiki.mapper.ContentMapper;
 import com.zz.wiki.mapper.DocMapper;
 import com.zz.wiki.req.DocQueryReq;
 import com.zz.wiki.req.DocSaveReq;
@@ -26,6 +28,9 @@ public class DocService {
 
     @Resource
     private SnowFlake snowFlake;
+
+    @Resource
+    private ContentMapper contentMapper;
 
     public PageResp<DocQueryResp> list (DocQueryReq req) {
 
@@ -69,10 +74,21 @@ public class DocService {
          * 保存
          * */
         Doc doc = CopyUtil.copy(req, Doc.class);
+        Content content = CopyUtil.copy(req, Content.class);
+
         if(ObjectUtils.isEmpty(doc.getId())){
             doc.setId(snowFlake.nextId());
+            content.setId(doc.getId());
+            contentMapper.insert(content);
             return docMapper.insert(doc);
         }else{
+            // 大字段使用 下面方法
+            int contentInt = contentMapper.updateByPrimaryKeyWithBLOBs(content);
+            if(contentInt == 0){
+                contentMapper.insert(content);
+
+            }
+
             return docMapper.updateByPrimaryKey(doc);
         }
 
@@ -83,5 +99,10 @@ public class DocService {
 
     public int delete(Long id) {
         return docMapper.deleteByPrimaryKey(id);
+    }
+
+    public String findContent(Long id) {
+        Content content = contentMapper.selectByPrimaryKey(id);
+        return content.getContent();
     }
 }
