@@ -1,0 +1,87 @@
+package com.zz.wiki.service;
+
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.zz.wiki.domain.Doc;
+import com.zz.wiki.domain.DocExample;
+import com.zz.wiki.mapper.DocMapper;
+import com.zz.wiki.req.DocQueryReq;
+import com.zz.wiki.req.DocSaveReq;
+import com.zz.wiki.resp.DocQueryResp;
+import com.zz.wiki.resp.PageResp;
+import com.zz.wiki.util.CopyUtil;
+import com.zz.wiki.util.SnowFlake;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@Service
+public class DocService {
+
+    @Resource
+    private DocMapper docMapper;
+
+    @Resource
+    private SnowFlake snowFlake;
+
+    public PageResp<DocQueryResp> list (DocQueryReq req) {
+
+        DocExample docExample = new DocExample();
+        // @ 相当于where 条件
+        DocExample.Criteria criteria = docExample.createCriteria();
+        docExample.setOrderByClause("sort asc");
+
+        PageHelper.startPage(req.getPage(), req.getSize());
+        List<Doc> docs = docMapper.selectByExample(docExample);
+
+        PageInfo<Doc> pageInfo = new PageInfo<>(docs);
+        long total = pageInfo.getTotal();
+        int pages = pageInfo.getPages();
+
+        PageResp<DocQueryResp> pageResp = new PageResp<>();
+        pageResp.setList(CopyUtil.copyList(docs, DocQueryResp.class));
+        pageResp.setTotal(pageInfo.getTotal());
+
+
+
+        return pageResp;
+    }
+
+
+    public List<DocQueryResp> all (DocQueryReq req) {
+
+        DocExample docExample = new DocExample();
+        docExample.setOrderByClause("sort asc");
+
+
+        List<Doc> docs = docMapper.selectByExample(docExample);
+
+        List<DocQueryResp> list = CopyUtil.copyList(docs, DocQueryResp.class);
+
+        return list;
+    }
+
+    public int save(DocSaveReq req) {
+        /*
+         * 保存
+         * */
+        Doc doc = CopyUtil.copy(req, Doc.class);
+        if(ObjectUtils.isEmpty(doc.getId())){
+            doc.setId(snowFlake.nextId());
+            return docMapper.insert(doc);
+        }else{
+            return docMapper.updateByPrimaryKey(doc);
+        }
+
+
+
+    }
+
+
+    public int delete(Long id) {
+        return docMapper.deleteByPrimaryKey(id);
+    }
+}

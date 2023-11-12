@@ -3,14 +3,10 @@ package com.zz.wiki.controller;
 
 import com.zz.wiki.req.CategoryQueryReq;
 import com.zz.wiki.req.CategorySaveReq;
-import com.zz.wiki.req.EbookQueryReq;
-import com.zz.wiki.req.EbookSaveReq;
 import com.zz.wiki.resp.CategoryQueryResp;
 import com.zz.wiki.resp.CommonResp;
-import com.zz.wiki.resp.EbookQueryResp;
 import com.zz.wiki.resp.PageResp;
 import com.zz.wiki.service.CategoryService;
-import com.zz.wiki.service.EbookService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
