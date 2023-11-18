@@ -65,7 +65,7 @@ public class UserController {
 
         Long token = snowFlake.nextId();
 
-        redisTemplate.opsForValue().set(token, JSONObject.toJSONString(login), 3600 * 24, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(token.toString(), JSONObject.toJSONString(login), 3600 * 24, TimeUnit.SECONDS);
 
         System.out.println(redisTemplate.hasKey(token));
         System.out.println(redisTemplate.opsForValue().get(token));
@@ -73,5 +73,12 @@ public class UserController {
 
 
         return   CommonResp.ok(login);
+    }
+
+    @GetMapping("/logout/{token}")
+    public CommonResp<Boolean> delete (@PathVariable String token){
+        System.out.println(redisTemplate.opsForValue().get(token));
+        Boolean delete = redisTemplate.delete(token);
+        return  CommonResp.ok(delete);
     }
 }
