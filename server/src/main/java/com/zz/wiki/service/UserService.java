@@ -7,8 +7,10 @@ import com.zz.wiki.domain.User;
 import com.zz.wiki.domain.UserExample;
 import com.zz.wiki.exception.BusinessException;
 import com.zz.wiki.mapper.UserMapper;
+import com.zz.wiki.req.UserLoginReq;
 import com.zz.wiki.req.UserQueryReq;
 import com.zz.wiki.req.UserSaveReq;
+import com.zz.wiki.resp.UserLoginResp;
 import com.zz.wiki.resp.UserQueryResp;
 import com.zz.wiki.resp.PageResp;
 import com.zz.wiki.util.CopyUtil;
@@ -21,6 +23,7 @@ import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.List;
 
+import static com.zz.wiki.exception.BusinessExceptionCode.LOGIN_USER_ERROR;
 import static com.zz.wiki.exception.BusinessExceptionCode.USER_LOGIN_NAME_EXIST;
 
 /**
@@ -106,5 +109,23 @@ public class UserService {
 
     public int delete(Long id) {
         return userMapper.deleteByPrimaryKey(id);
+    }
+
+    public UserLoginResp login(UserLoginReq req) {
+        User userDb = selectByLoginName(req.getLoginName());
+        if(ObjectUtils.isEmpty(userDb)){
+            System.out.println("用户名不存在"+req.getLoginName());
+            throw  new BusinessException(LOGIN_USER_ERROR);
+
+        }else {
+            if(userDb.getPassword().equals(req.getPassword())){
+                UserLoginResp user = CopyUtil.copy(userDb, UserLoginResp.class);
+                return  user;
+            }else {
+                System.out.println("密码不对"+req.getLoginName());
+                throw  new BusinessException(LOGIN_USER_ERROR);
+            }
+        }
+
     }
 }
