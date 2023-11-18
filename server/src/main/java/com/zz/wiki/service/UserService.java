@@ -82,7 +82,8 @@ public class UserService {
             // 用户名已存在
             throw new BusinessException(USER_LOGIN_NAME_EXIST);
         }else{
-            return userMapper.updateByPrimaryKey(user);
+            user.setLoginName(null);
+            return userMapper.updateByPrimaryKeySelective(user);
         }
     }
 
