@@ -1,6 +1,7 @@
 package com.zz.wiki.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.zz.wiki.req.UserLoginReq;
 import com.zz.wiki.req.UserQueryReq;
 import com.zz.wiki.req.UserSaveReq;
@@ -64,7 +65,10 @@ public class UserController {
 
         Long token = snowFlake.nextId();
 
-        redisTemplate.opsForValue().set(token, login, 3600 * 24, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(token, JSONObject.toJSONString(login), 3600 * 24, TimeUnit.SECONDS);
+
+        System.out.println(redisTemplate.hasKey(token));
+        System.out.println(redisTemplate.opsForValue().get(token));
         login.setToken(token.toString());
 
 
