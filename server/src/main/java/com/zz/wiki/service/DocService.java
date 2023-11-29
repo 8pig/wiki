@@ -7,6 +7,7 @@ import com.zz.wiki.domain.Content;
 import com.zz.wiki.domain.Doc;
 import com.zz.wiki.domain.DocExample;
 import com.zz.wiki.mapper.ContentMapper;
+import com.zz.wiki.mapper.CustomDocMapper;
 import com.zz.wiki.mapper.DocMapper;
 import com.zz.wiki.req.DocQueryReq;
 import com.zz.wiki.req.DocSaveReq;
@@ -31,6 +32,11 @@ public class DocService {
 
     @Resource
     private ContentMapper contentMapper;
+
+
+    @Resource
+    private CustomDocMapper customDocMapper;
+
 
     public PageResp<DocQueryResp> list (DocQueryReq req) {
 
@@ -78,6 +84,8 @@ public class DocService {
 
         if(ObjectUtils.isEmpty(doc.getId())){
             doc.setId(snowFlake.nextId());
+            doc.setViewCount(0);
+            doc.setVoteCount(0);
             content.setId(doc.getId());
             contentMapper.insert(content);
             return docMapper.insert(doc);
@@ -103,6 +111,14 @@ public class DocService {
 
     public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
+        /* 文档阅读数+1*/
+        customDocMapper.incrementViewCount(id);
         return content.getContent();
+    }
+
+
+    public void vote(Long id) {
+        customDocMapper.incrementVoteCount(id);
+
     }
 }
