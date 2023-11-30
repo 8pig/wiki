@@ -6,6 +6,8 @@ import com.github.pagehelper.PageInfo;
 import com.zz.wiki.domain.Content;
 import com.zz.wiki.domain.Doc;
 import com.zz.wiki.domain.DocExample;
+import com.zz.wiki.exception.BusinessException;
+import com.zz.wiki.exception.BusinessExceptionCode;
 import com.zz.wiki.mapper.ContentMapper;
 import com.zz.wiki.mapper.CustomDocMapper;
 import com.zz.wiki.mapper.DocMapper;
@@ -14,6 +16,8 @@ import com.zz.wiki.req.DocSaveReq;
 import com.zz.wiki.resp.DocQueryResp;
 import com.zz.wiki.resp.PageResp;
 import com.zz.wiki.util.CopyUtil;
+import com.zz.wiki.util.RedisUtil;
+import com.zz.wiki.util.RequestContext;
 import com.zz.wiki.util.SnowFlake;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -36,6 +40,9 @@ public class DocService {
 
     @Resource
     private CustomDocMapper customDocMapper;
+
+    @Resource
+    private RedisUtil redisUtil;
 
 
     public PageResp<DocQueryResp> list (DocQueryReq req) {
@@ -118,7 +125,17 @@ public class DocService {
 
 
     public void vote(Long id) {
-        customDocMapper.incrementVoteCount(id);
+//        获取ip+doc 做key 24小时不能重复
+        String key = RequestContext.getRemoteAddr();
+
+        if(redisUtil.validateRepeat("DOC_VOTE_"+ id + "_" + key, 3600 * 24)){
+            customDocMapper.incrementVoteCount(id);
+        }else {
+            throw  new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+        }
+
+
+
 
     }
 }
